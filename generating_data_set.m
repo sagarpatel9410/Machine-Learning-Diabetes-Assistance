@@ -1,6 +1,7 @@
 function [sample_user_set, users_generated] =  generating_data_set(base_user,topics,sparsity,K,N)
 %%%%%Generate a base set of users, all other users will be modelled of
 %%%%%these users
+rng('default');
 A = rand(topics,base_user);
 %%for each base set user generate max K users that are similar with Max Noise N
 %%base value of K = 6
