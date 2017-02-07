@@ -1,0 +1,16 @@
+Create C user clusters
+Compute information gain (IG) of the items
+Non Personalised step:
+	REPEAT
+		Ask the next question on the list of items ordered by IG score
+		Update user profile
+	UNTIL user has rated i items
+Personalised step:
+	REPEAT
+		Find the best l neighbours based on the profile so far
+		Recompute IG based on the l users ratings
+		Ask the K next question on the list of items ordered by IG score
+		Update user profile
+	UNTIL best l neighbours do not change
+Final step:
+	Take weighted average of the best l neighbours to determine the new users ratings for items
