@@ -1,4 +1,5 @@
-function [sample_user_set, users_generated] =  generating_data_set(base_user,topics,sparsity,K,N)
+%eg. generating_data_set(10, 35, 0, 25, 0.1)
+function [sample_user_set, new_user,users_generated] =  generating_data_set(base_user,topics,sparsity,K,N)
 %%%%%Generate a base set of users, all other users will be modelled of
 %%%%%these users
 A = rand(topics,base_user);
@@ -45,5 +46,23 @@ for i = 1:col
 end
 
 sample_user_set = sample_user_set';
+
+[~, users] = size(sample_user_set);
+ 
+temp = randi([1 users],1,1);
+new_user = sample_user_set(:,temp);
+
+for i = 1:topics
+    noise = N - (2*N)*rand();
+    new_user(i,1) = new_user(i,1) + noise;
+
+    %check if value does not exceed range {0,1}
+    if(new_user(i,1) > 1)
+        new_user(i,1) = 1;
+    end
+    if(new_user(i,1) < 0)
+        new_user(i,1) = 0;
+    end
+end
 
 end

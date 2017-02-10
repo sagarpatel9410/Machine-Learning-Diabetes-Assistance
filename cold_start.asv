@@ -17,12 +17,20 @@ k = (1:kcluster_size)';
 user_map = (1:users)';
 IG = calculate_information_gain(k,idx, user_data_set,user_map,kcluster_size);
 
-%--------------------------------------------------------------------------
 
 %Non-personalised
-[new_user_profile, questions_asked] = non_personalised(10,IG,new_user);
+%Initial Profile Build ask questions or until similarity between a
+%cluster is greater than some threshold (Not implemented yet)
 
-%--------------------------------------------------------------------------
+new_user_profile = zeros(35,2);
+
+initial = 10;
+questions_asked = 0;
+for np = 1:initial 
+    new_user_profile(IG(np,2),1) = new_user_profile(IG(np,2),1) + blackbox(new_user,IG(np,2));
+    new_user_profile(IG(np,2),2) = new_user_profile(IG(np,2),2) + 1;
+    questions_asked = questions_asked + 1;
+end
 
 %Personalised Step
 
