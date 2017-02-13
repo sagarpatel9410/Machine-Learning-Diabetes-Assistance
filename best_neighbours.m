@@ -7,4 +7,3 @@ for k = 1:val
 end
 
 neighbours = sortrows(neighbours,-1);
-neighbours = neighbours(1:l,:);
