@@ -1,5 +1,6 @@
 clear
 %Generating the data set & simulate random user
+
 Noise = 0.1; Topics = 35; Base_user = 10; Sparsity = 0; Max_user = 20;
 [user_data_set, new_user] = generating_data_set(Base_user,Topics,Sparsity,Max_user,Noise);
 %--------------------------------------------------------------------------
@@ -32,7 +33,14 @@ while ~loop_cond
     %find best L neighbours 
     best_n = best_neighbours(centroids,new_user_profile,0);
     best_n_pruned = best_n(best_n(:,1) >= 0, :);
-    neighbours = best_n_pruned(1:l,:);
+
+    [height,~] = size(best_n_pruned);
+    
+    if height >= l
+        height = l;
+    end
+    
+    neighbours = best_n_pruned(1:height,:);
     
     if previous_user_neighbours(:,2) == neighbours(:,2)
             loop_cond = true;
@@ -42,9 +50,9 @@ while ~loop_cond
     
     if(~loop_cond)
         %calculate information gain using data from best_neighbours
-        k = zeros(l,1);
+        k = zeros(height,1);
         user_map = 0;
-        for i = 1:l
+        for i = 1:height
             k(i,1) = neighbours(i,2);
             for j = 1:users
                 if(idx(j,1) == neighbours(i,2))
@@ -76,11 +84,8 @@ for i = 1:r
     end
 end
 
-%%%to do take the best users from the clusters determine a function that
-%%%can best do this.
-
 user_neighbourhood(1,:) = [];
-new_user_profile = predict_profile(new_user_profile(:,1), user_neighbourhood);
+[new_user_profile,sim] = predict_profile(new_user_profile(:,1), user_neighbourhood);
 error = immse(new_user_profile, new_user');
 
 hold off
