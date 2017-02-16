@@ -8,3 +8,8 @@ Xavier Amatriain, Alejandro Jaimes, Nuria Oliver, and Josep M. Pujol
 
 Application of Dimensionality Reduction in Recommender System -- A Case Study
 Badrul M. Sarwar, George Karypis, Joseph A. Konstan, John T. Riedl
+
+
+A Collaborative Filtering Recommendation Algorithm Based on SVD Smoothing 
+YiBo
+
