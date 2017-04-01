@@ -6,8 +6,7 @@ for i = 1:max_clusters_size
 end
 
 plot(mse_clustersize);
-%kcluster_size = input('Choose cluster size: ');
-kcluster_size = 10;
+kcluster_size = input('Choose cluster size: ');
 [idx,centroids] = kmeans(user_data_set',kcluster_size,'Replicates',10,'Distance','correlation');
 
 
