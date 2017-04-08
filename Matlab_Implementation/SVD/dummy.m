@@ -1,9 +1,11 @@
-clear
+
 rng('default');
-data = generating_data_set(10,35,0.3,20,0.1);
+%data = generating_data_set(10,35,0.3,20,0.1);
 data_adj = data;
 data_test = data;
 [r,c] = size(data);
+
+userAverage = mean(data,1);
 
 for i = 1:r
     avg = mean(data(i,:));
@@ -30,7 +32,7 @@ A =  (Uk*sqrtm(Sk)) * (sqrtm(Sk)*Vk');
 for i = 1:r
     for j = 1:c
         if(data(i,j) == 0)
-            data(i,j) = mean(data(:,j)) + A(j,i);
+            data(i,j) = userAverage(j) + A(j,i);
         end        
     end
 end
