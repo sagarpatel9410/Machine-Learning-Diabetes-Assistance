@@ -1,7 +1,7 @@
 function [data] = SmoothingSVD(dataset, dimension)
 %SMOOTHINGSVD - Attempts to allieviate problem of sparsity in dataset
 %Based of a study by Badrul M. Sarwar Application of Dimensionality Reduction in Recommender System
-rng('default');
+
 [topics, ~] = size(dataset);
 data = dataset;
 %Manipulate the data such that unrated items take on
