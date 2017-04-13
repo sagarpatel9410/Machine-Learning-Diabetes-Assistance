@@ -1,7 +1,7 @@
 clear
 rng(0);
 %values to alternate:
-dimension = 10;
+dimension = 35;
 clusterSize = 10;
 nonPersonalisedQuestions = 15;
 BestLNeighbours = 3;
@@ -36,6 +36,7 @@ newUserPredicted = PredictProfile( newUserPredicted(:,1), userNeighbourHood, 0.8
 error = immse(newUserPredicted(:,1), new_user);
 
 hold off
+
 plot(new_user)
 hold on
 plot(newUserPredicted)
