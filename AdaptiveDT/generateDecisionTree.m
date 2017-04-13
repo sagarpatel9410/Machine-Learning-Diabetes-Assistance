@@ -1,22 +1,24 @@
-function tree = generateDecisionTree(dataSet, items, successThreshold)
+function [tree,leavesIDX] = generateDecisionTree(data,param)
 
-%splitting item selection
-for i = 1:items
-    %Loop over all users in the dataset S_t that have rated the item i
-    raters = find(dataSet(:,i));
-    %determine if user belongs to success or failure branch
-    raters(:,2) = dataSet(raters(:,1),i) > successThreshold;
-    L = raters(raters(:,2) == 1 ,1);
-    H = raters(raters(:,2) == 0 ,1);
-    
-    sumTL = sum(dataSet(L,i));
-    sumTH = sum(dataSet(H,i));
-    
-    sumSquTL = sum(dataSet(L,i).^2);
-    sumSquHL = sum(dataSet(H,i).^2);
-    
-    
-    
-        
+%        Base               Each node stores:
+%         1                   trees.idx       - data (index only) which split into this node
+%        / \                  trees.splitter  - threshold of split function
+%       2   3                 
+%      / \ / \               
+%     4  5 6  7                
+
+disp('Training Decision Tree...');
+
+%Think about implementing a random forest.
+
+[idx, num_topics] = size(data);
+idx = [1:idx]';
+% Initialise base node
+tree(1).node(1) = struct('idx',idx,'splitter',0);
+
+% Split Nodes
+for n = 1:2^(param.depth-1)-1
+    [tree(1).node(n),tree(1).node(n*2),tree(1).node(n*2+1)] = splitNode(data,tree(1).node(n),param);
 end
+
 end
