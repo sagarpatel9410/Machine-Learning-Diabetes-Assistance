@@ -1,7 +1,7 @@
 function [ profile_predicted ] = predictProfile( user_neighbourhood, profile_predicted, data )
 
 T = size(profile_predicted,2);
-pp = zeros(35,2);
+pp = zeros(size(data,2),2);
 
 for i = 1:T
     pp = pp + profile_predicted{i};

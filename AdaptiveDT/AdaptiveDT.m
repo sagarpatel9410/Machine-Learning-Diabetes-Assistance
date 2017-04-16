@@ -7,6 +7,7 @@ ratingsMatrix = round(ratingsMatrix' .* 100);
 param.depth = 5;        % tree max depth
 param.treeNum = 5;
 param.a = 10;
+param.successThreshold = 50;
 
 % Build decision tree
 tree = growTrees(ratingsMatrix,param);

@@ -9,7 +9,7 @@ for T = 1:param.treeNum
     tree(T).node(1) = struct('idx',idx,'splitter',0);
 
     for n = 1:2^(param.depth-1)-1
-        [tree(T).node(n),tree(T).node(n*2),tree(T).node(n*2+1)] = split(data,tree(T).node(n), param.a);
+        [tree(T).node(n),tree(T).node(n*2),tree(T).node(n*2+1)] = split(data,tree(T).node(n), param.a, param.successThreshold);
     end
 end
 

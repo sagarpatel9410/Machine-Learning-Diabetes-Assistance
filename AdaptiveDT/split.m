@@ -1,6 +1,5 @@
-function [node,nodeL,nodeH] = split( data,node, a )
+function [node,nodeL,nodeH] = split( data,node, a, successThreshold )
 
-successThreshold = 50;
 
 % Initilise child nodes
 nodeL = struct('idx',[],'splitter',0);
@@ -13,10 +12,8 @@ end
 
 %Calculate error before split
 eBefore = calculateError(data,node.idx);
-Err = zeros(35,1);
-
+Err = zeros(size(data,2),1);
 for i = 1:size(data,2)
-    
     idxL = (data(node.idx, i) >= successThreshold);
     idxH = ~idxL;
     idxL = node.idx(idxL.*node.idx ~= 0);
