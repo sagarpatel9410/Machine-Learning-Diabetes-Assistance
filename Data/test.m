@@ -19,7 +19,7 @@ tree = growTrees(realUserData,param);
 
 user_predicted = predictProfile( user_neighbourhood, profile_predicted, realUserData );
 
-error = immse(user_predicted/100, (newUser/100)');
+RMSE = sqrt(mean((user_predicted/100 - (newUser/100)').^2));  % Root Mean Squared Error
 
 plot(user_predicted)
 hold on
