@@ -30,8 +30,8 @@ attempts = full(attempts);
 %Matrix factorization using gradient descent algorithm.
 %Latent Factors
 K = 25;
-P = random('Normal',0,0.01,size(data,1),K);
-Q = random('Normal',0,0.01,size(data,2),K);
+P = random('Normal',0,0.01,length(user),K);
+Q = random('Normal',0,0.01,length(items),K);
 gamma = 0.0002;
 lambda = 0.02;
 epochs = 75;
@@ -55,6 +55,11 @@ for step = 1:epochs
 %     if e < 0.001
 %         break;
 %     end
+end
+
+function e = my_mse(I,R,Q,P)
+    val = ((I.*(R-P'*Q)).^2)/length(I(I>0));
+     e = sum(val(:));
 end
 
 
