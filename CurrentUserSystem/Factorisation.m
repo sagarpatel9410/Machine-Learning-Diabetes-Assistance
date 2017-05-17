@@ -20,8 +20,8 @@
 % end
 
 clear
-load('data.mat'); %variable is attempts and data
 rng('default');
+load('data.mat'); %variable is attempts and data
 
 data = full(data);
 attempts = full(attempts);
@@ -34,7 +34,7 @@ P = random('Normal',0,0.01,size(data,1),K);
 Q = random('Normal',0,0.01,size(data,2),K);
 gamma = 0.0002;
 lambda = 0.02;
-epochs = 75;
+epochs = 400;
 
 train_error = zeros(epochs,1);
 
@@ -42,19 +42,14 @@ train_error = zeros(epochs,1);
 for step = 1:epochs
     tic
     for i = 1:length(user)
-   
         err = data(user(i), items(i)) - P(user(i), :)*Q(items(i),:)';
         P(user(i), :) = P(user(i), :) + gamma * (err * Q(items(i),:) - lambda * P(user(i),:));
         Q(items(i), :) = Q(items(i), :) + gamma * (err * P(user(i),:)- lambda * Q(items(i),:));
     end
     toc
     fprintf('Finished iteration');
-    
+    step
+    fprintf('\n');
     train_error(step) = my_mse(attempts,data,Q,P);
-
-%     if e < 0.001
-%         break;
-%     end
 end
-
 
