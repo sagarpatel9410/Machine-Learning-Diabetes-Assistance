@@ -17,49 +17,70 @@
 % for i = 1: size(A,1)
 %     utility_matrix(A(i,7), A(i,8)) = A(i,5);
 %     attemptsidx(A(i,7), A(i,8)) = 1;
-% end
+% % end
+% load('data.mat');
+% attempts = full(attempts);
+% data = full(data);
+% A = sum(attempts);
+% Aidx = find(A > 40)';
+% attempts = attempts(:,Aidx);
+% data = data(:,Aidx);
+% 
+% A = sum(attempts,2);
+% Aidx = find(A > 20)';
+% attempts = attempts(Aidx,:);
+% data = data(Aidx,:);
+% 
+% A = sum(attempts);
+% Aidx = find(A > 40)';
+% attempts = attempts(:,Aidx);
+% data = data(:,Aidx);
 
 clear
-load('data.mat'); %variable is attempts and data
 rng('default');
+load('data.mat');
 
-data = full(data);
-attempts = full(attempts);
-[user, items] = find(attempts);
+% train_attempts = zeros(size(attempts,1),size(attempts,2));
+% test_attempts = zeros(size(attempts,1),size(attempts,2));
+% 
+% for i = 1:size(attempts,1)
+%     
+%     idx = find(attempts(i,:));
+%     perm = randperm(length(idx))';
+%     train = round(0.8 * length(idx));
+%     
+%     train_attempts(i,idx(1,perm(1:train,1))) = 1;
+%     test_attempts(i,idx(1,perm(train+1:end,1))) = 1;
+%     
+%     
+% end
+
+[user, items] = find(train_attempts);
 
 %Matrix factorization using gradient descent algorithm.
 %Latent Factors
 K = 25;
-P = random('Normal',0,0.01,length(user),K);
-Q = random('Normal',0,0.01,length(items),K);
+P = random('Normal',0,0.01,size(data,1),K);
+Q = random('Normal',0,0.01,size(data,2),K);
 gamma = 0.0002;
 lambda = 0.02;
-epochs = 75;
+epochs = 400;
 
 train_error = zeros(epochs,1);
+test_error = zeros(epochs,1);
 
 
 for step = 1:epochs
     tic
     for i = 1:length(user)
-   
         err = data(user(i), items(i)) - P(user(i), :)*Q(items(i),:)';
         P(user(i), :) = P(user(i), :) + gamma * (err * Q(items(i),:) - lambda * P(user(i),:));
         Q(items(i), :) = Q(items(i), :) + gamma * (err * P(user(i),:)- lambda * Q(items(i),:));
     end
     toc
-    fprintf('Finished iteration');
-    
-    train_error(step) = my_mse(attempts,data,Q,P);
-
-%     if e < 0.001
-%         break;
-%     end
+t    step
+    fprintf('\n');
+    train_error(step) = my_mse(train_attempts,data,Q,P);
+    test_error(step) = my_mse(test_attempts,data,Q,P);
 end
-
-function e = my_mse(I,R,Q,P)
-    val = ((I.*(R-P'*Q)).^2)/length(I(I>0));
-     e = sum(val(:));
-end
-
 

@@ -17,15 +17,45 @@
 % for i = 1: size(A,1)
 %     utility_matrix(A(i,7), A(i,8)) = A(i,5);
 %     attemptsidx(A(i,7), A(i,8)) = 1;
-% end
+% % end
+% load('data.mat');
+% attempts = full(attempts);
+% data = full(data);
+% A = sum(attempts);
+% Aidx = find(A > 40)';
+% attempts = attempts(:,Aidx);
+% data = data(:,Aidx);
+% 
+% A = sum(attempts,2);
+% Aidx = find(A > 20)';
+% attempts = attempts(Aidx,:);
+% data = data(Aidx,:);
+% 
+% A = sum(attempts);
+% Aidx = find(A > 40)';
+% attempts = attempts(:,Aidx);
+% data = data(:,Aidx);
 
 clear
 rng('default');
-load('data.mat'); %variable is attempts and data
+load('data.mat');
 
-data = full(data);
-attempts = full(attempts);
-[user, items] = find(attempts);
+% train_attempts = zeros(size(attempts,1),size(attempts,2));
+% test_attempts = zeros(size(attempts,1),size(attempts,2));
+% 
+% for i = 1:size(attempts,1)
+%     
+%     idx = find(attempts(i,:));
+%     perm = randperm(length(idx))';
+%     train = round(0.8 * length(idx));
+%     
+%     train_attempts(i,idx(1,perm(1:train,1))) = 1;
+%     test_attempts(i,idx(1,perm(train+1:end,1))) = 1;
+%     
+%     
+% end
+
+[user, items] = find(train_attempts);
 
 %Matrix factorization using gradient descent algorithm.
 %Latent Factors
@@ -37,6 +67,7 @@ lambda = 0.02;
 epochs = 400;
 
 train_error = zeros(epochs,1);
+test_error = zeros(epochs,1);
 
 
 for step = 1:epochs
@@ -50,6 +81,8 @@ for step = 1:epochs
     fprintf('Finished iteration');
     step
     fprintf('\n');
-    train_error(step) = my_mse(attempts,data,Q,P);
+    train_error(step) = my_mse(train_attempts,data,Q,P);
+    test_error(step) = my_mse(test_attempts,data,Q,P);
 end
+
 
