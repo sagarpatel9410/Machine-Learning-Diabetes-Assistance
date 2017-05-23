@@ -1,0 +1,13 @@
+newData = zeros(3679196,4);
+
+
+for i = 1:size(taskid,1)
+    tic
+    idx = strmatch(taskid{i,1}, taskidcell);
+    newdata(idx,2) = i;
+end
+
+for i = 1:size(uid,1)
+    idx = strmatch(uid{i,1}, uidcell);
+    newData(idx,1) = i;
+end

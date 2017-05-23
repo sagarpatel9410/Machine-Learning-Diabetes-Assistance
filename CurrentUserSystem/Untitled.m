@@ -1,11 +1,22 @@
-valbefore = Data(1,1);
-a(1) = 1;
-for i = 2:size(Data(:,1),1)
-   if isequal(valbefore,Data(i,1))
-       a(i) = a(i - 1);
-   else
-        a(i) = a(i-1) + 1;
-        valbefore = Data(i,1);
-   end
-   i
+
+parfor_progress(size(taskid,1)); % Initialize 
+
+
+parfor i = 1:size(taskid,1)
+    idx = strmatch(taskid{i,1}, taskidcell); 
+    newData{i} = idx;
+    parfor_progress
+    
+end
+
+parfor_progress(0); % Clean up
+
+
+
+for i = 1:size(uid,1)
+    tic
+    idx = strmatch(uid{i,1}, uidcell);
+    newData(idx,1) = i;
+    toc
+    i
 end
