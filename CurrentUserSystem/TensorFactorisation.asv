@@ -1,0 +1,5 @@
+users = length(unique(dataset(:,1)));
+questions = length(unique(dataset(:,2)));
+mxtime = max(dataset(:,3));
+
+utility = zeros(users,questions,m);
