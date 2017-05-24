@@ -1,79 +1,71 @@
-% %Manipulate the dataset to desired form.
-% load dataset.csv
-% 
-% A = dataset(dataset(:,6) == 1, :);
-% B = unique(A(:,2:4),'rows');
-% D = B(:,1).* B(:,2).* B(:,3);
-% C = unique(A(:,1));
-% for i = 1: size(A,1)
-%     %Determine unique id for problem col 2 + 3 + 4
-%        A(i, 8) = find(A(i,2).* A(i,3).* A(i,4) == D);
-%        A(i, 7) = find(A(i,1) == C);
-% end
-% 
-% utility_matrix = zeros(max(A(:,7)), max(A(:,8)));
-% attemptsidx = zeros(max(A(:,7)), max(A(:,8)));
-% 
-% for i = 1: size(A,1)
-%     utility_matrix(A(i,7), A(i,8)) = A(i,5);
-%     attemptsidx(A(i,7), A(i,8)) = 1;
-% % end
-% load('data.mat');
-% attempts = full(attempts);
-% data = full(data);
-% A = sum(attempts);
-% Aidx = find(A > 40)';
-% attempts = attempts(:,Aidx);
-% data = data(:,Aidx);
-% 
-% A = sum(attempts,2);
-% Aidx = find(A > 20)';
-% attempts = attempts(Aidx,:);
-% data = data(Aidx,:);
-% 
-% A = sum(attempts);
-% Aidx = find(A > 40)';
-% attempts = attempts(:,Aidx);
-% data = data(:,Aidx);
-
 clear
 rng('default');
-load('data.mat');
 
-% train_attempts = zeros(size(attempts,1),size(attempts,2));
-% test_attempts = zeros(size(attempts,1),size(attempts,2));
+% %Want to manipulate the algebra_utilityset to take into account only the last
+% %seen rating for a student to model no context aware case.
 % 
-% for i = 1:size(attempts,1)
+%load('algebra_dataset_none_context.mat');
+% unique_user_task = unique(utilityset(:,[1,2]), 'rows');
+% 
+% attempts = zeros(length(unique(utilityset(:,1))),length(unique(utilityset(:,2))));
+% utility = zeros(length(unique(utilityset(:,1))),length(unique(utilityset(:,2))));
+% 
+% for i = 1:length(unique_user_task(:,1))
 %     
-%     idx = find(attempts(i,:));
-%     perm = randperm(length(idx))';
-%     train = round(0.8 * length(idx));
+%     values = utilityset(ismember(utilityset(:,[1,2]), unique_user_task(i,:),'rows'), :);
+%     [~,id] = max(values(:,3));
 %     
-%     train_attempts(i,idx(1,perm(1:train,1))) = 1;
-%     test_attempts(i,idx(1,perm(train+1:end,1))) = 1;
-%     
-%     
+%     attempts(values(id,1),values(id,2)) = 1;
+%     utility(values(id,1),values(id,2)) = values(id,4);
+%     i
 % end
 
-[user, items] = find(train_attempts);
+
+%Prefiltering context aware system.
+load algebra_dataset.mat
+attempts = sum(attempts,3);
+utility = sum(utility,3)./attempts;
+utility(isnan(utility)) = 0 ;
+attempts = attempts >= 1;
+
+[user, items] = find(attempts);
 
 %Matrix factorization using gradient descent algorithm.
 %Latent Factors
-K = 25;
-P = random('Normal',0,0.01,size(data,1),K);
-Q = random('Normal',0,0.01,size(data,2),K);
+K = 10;
+P = rand(size(utility,1),K);
+Q = rand(size(utility,2),K);
 gamma = 0.0002;
 lambda = 0.02;
 epochs = 400;
 
 train_error = zeros(epochs,1);
-test_error = zeros(epochs,1);
+
+mu = sum(sum(utility))/length(attempts(attempts>0));
+
+for s = 1:size(utility,1)
+   ratings_s = utility(s,:) - mu ;
+   ratings_s = attempts(s,:).*ratings_s;
+   student_bias(s) = sum(ratings_s)/sum(attempts(s,:));
+end
+
+for t = 1:size(utility,2)
+    ratings_t = utility(:,t) - mu ;
+    ratings_t = attempts(:,t).*ratings_t;
+    task_bias(t) = sum(ratings_t)/sum(attempts(:,t));
+end
 
 
 for step = 1:epochs
     tic
     for i = 1:length(user)
-        err = data(user(i), items(i)) - P(user(i), :)*Q(items(i),:)';
+        predicted =  mu + student_bias(user(i)) + task_bias(items(i)) + P(user(i), :)*Q(items(i),:)';
+        err = utility(user(i), items(i)) - predicted;
+        
+        mu = mu + gamma*err;
+        student_bias(user(i)) = student_bias(user(i)) + gamma *(err - lambda*student_bias(user(i)));
+        task_bias(items(i)) = task_bias(items(i)) + gamma * (err - lambda*task_bias(items(i)));
+        
         P(user(i), :) = P(user(i), :) + gamma * (err * Q(items(i),:) - lambda * P(user(i),:));
         Q(items(i), :) = Q(items(i), :) + gamma * (err * P(user(i),:)- lambda * Q(items(i),:));
     end
@@ -81,8 +73,14 @@ for step = 1:epochs
     fprintf('Finished iteration');
     step
     fprintf('\n');
-    train_error(step) = my_mse(train_attempts,data,Q,P);
-    test_error(step) = my_mse(test_attempts,data,Q,P);
+    for i = 1:length(user)
+        
+        predicted =  mu + student_bias(user(i)) + task_bias(items(i)) + P(user(i), :)*Q(items(i),:)';
+        e(i) = (utility(user(i),items(i)) - predicted)^2;
+        
+    end
+    mean(e)
+    train_error(step) = mean(e);
 end
 
 
