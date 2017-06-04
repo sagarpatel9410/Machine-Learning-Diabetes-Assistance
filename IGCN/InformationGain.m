@@ -5,7 +5,8 @@ function [topics_ordered, ig] = InformationGain(idx, K, userData, quantise)
 
 %Determine Entropy H(C)
 %C denotes the users into classes ie. how many users are in each cluster
-C = histc(idx(:),1:K)/usersNum;
+C = histcounts(idx(:),K)/usersNum;
+C = C';
 C = C(C ~= 0);
 entropyC = - (C' * log2(C));
 %---------------------------------------------------------------
@@ -21,6 +22,10 @@ for i = 1:topics
         C_R_A = C_R_A(C_R_A ~= 0);
         EntropyCra = -(C_R_A' * log2(C_R_A));
         sum_r = sum_r + ((norm(C_R_A)/norm(C))* EntropyCra);
+        if isempty(sum_r)
+            sum_r = 0;
+        end
+        
     end
     IG(i) = entropyC - sum_r;  
 end

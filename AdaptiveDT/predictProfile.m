@@ -21,13 +21,18 @@ relavant_data(1,:) = [];
 neighbours(1) = [];
 
 similarity = corr(relavant_data',profile_used);
-similarityNorm = normc(similarity);
-threshold = max(similarityNorm) * 0.8;
+if isnan(similarity)
+    [r,~] = size(similarity);
+    similarity = ones(r,1);
+    profile_predicted = (data(neighbours,:)' * similarity)/sum(abs(similarity));
+else
+    similarityNorm = normc(similarity);
+    threshold = max(similarityNorm) * 0.8;
 
-neighbours = neighbours(similarityNorm >= threshold, :);
-similarity = similarity(similarityNorm >= threshold);
+    neighbours = neighbours(similarityNorm >= threshold, :);
+    similarity = similarity(similarityNorm >= threshold);
 
-profile_predicted = (data(neighbours,:)' * similarity)/sum(abs(similarity));
-
+    profile_predicted = (data(neighbours,:)' * similarity)/sum(abs(similarity));
+end
 end
 

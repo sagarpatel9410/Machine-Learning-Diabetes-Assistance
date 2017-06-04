@@ -1,6 +1,6 @@
-function [user_neighbourhood, predicted_profile] = testTree(tree,newUser,param)
+function [user_neighbourhood, predicted_profile,questionsasked] = testTree(tree,newUser,param)
 
-
+questionsasked = 0;
 %Find the number of trees
 TSize = size(tree,2);
 
@@ -12,7 +12,7 @@ for T = 1:TSize
     for n = 1:param.depth
         %The node is not a leaf
         if (tree(T).node(nd).splitter && ~isempty(tree(T).node(nd).idx))
-            
+            questionsasked = questionsasked + 1;
             user_result = newUser(tree(T).node(nd).splitter) >= (rand()*100);
             pp(tree(T).node(nd).splitter, 2) = pp(tree(T).node(nd).splitter, 2) + 1;
             pp(tree(T).node(nd).splitter, 1) = (user_result + pp(tree(T).node(nd).splitter, 1))/pp(tree(T).node(nd).splitter, 2);

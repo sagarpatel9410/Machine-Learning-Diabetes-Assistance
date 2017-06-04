@@ -26,9 +26,9 @@ for i = 1:size(data,2)
 end
 
 %Randomisation of split function
-splitter = RouletteWheelSelection(max(0, eBefore-Err).^a);
+ splitter = RouletteWheelSelection(max(0, eBefore-Err).^a);
 
-%[~ , splitter] = min(Err);
+% [~ , splitter] = min(Err);
 
 %Terminate if the error from splitting is greater than error from not
 if isempty(splitter) || Err(splitter) >= eBefore

@@ -8,11 +8,11 @@ BestLNeighbours = 3;
 PersonalisedQuestions = 5;
 
 %Generating the data set & simulate random user
-[user_data_set, new_user] = GenerateData(10,35,0,20,0.1);
+[user_data_set, new_user] = GenerateData(10,35,0,10,0.1);
 
 %--------------------------------------------------------------------------
 % SVD Smoothing
-user_data_set = SmoothingSVD(user_data_set, dimension);
+%user_data_set = SmoothingSVD(user_data_set, dimension);
 
 %--------------------------------------------------------------------------
 %Determine clusters

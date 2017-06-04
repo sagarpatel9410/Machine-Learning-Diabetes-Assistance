@@ -1,0 +1,54 @@
+clear
+% [ratingsMatrix, newUser] =  GenerateData(20,35,0,20,0.1);
+% ratingsMatrix = round(ratingsMatrix' .* 100);
+load algebra.mat
+data = utility;
+
+max_tree_depth = 10;
+max_tree_num = 10;
+fileID = fopen('results_adt.txt','w');
+
+for seed = 1:20
+    
+    rng(seed-1);
+    num_users = size(data,1);
+    num_topics = size(data,2);
+    
+    cross = num_users; %Perfroming K fold cross validation
+
+    %Shuffle the data
+    idx_k = randperm(num_users);
+    
+for kcross = 1:cross
+    test_user = realUserData(idx_k(kfold),:)';
+    ratingsMatrix = realUserData';
+    %remove the test user from train data
+    train_data_set(:,idx_k(kfold)) = [];
+
+for dp = 2:max_tree_depth
+    for tn = 1:max_tree_num
+        % Tree Parameters.
+        param.depth = dp;        % tree max depth
+        param.treeNum = tn;
+        param.a = 10;
+        param.successThreshold = 50;
+
+        % Build decision tree
+        tree = growTrees(ratingsMatrix,param);
+
+        %Testing on new user
+        %Adjust User Profile
+        newUser = round(newUser' .* 100);
+
+        [user_neighbourhood, profile_predicted,questionasked] = testTree(tree,newUser,param);
+
+        user_predicted = predictProfile( user_neighbourhood, profile_predicted, ratingsMatrix );
+
+        error = immse(user_predicted/100, (newUser/100)');
+    end
+end
+% 
+% plot(user_predicted)
+% hold on
+% plot(newUser)
+% 
