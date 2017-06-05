@@ -25,7 +25,7 @@ cross = num_users; %Perfroming K fold cross validation
 idx_k = randperm(num_users);
 
 max_number_q = 40;
-nonPersonalisedQ = 20;
+nonPersonalisedQ = 30;
 %Testing Kfold Cross validation
 fileID = fopen('results.txt','w');
 

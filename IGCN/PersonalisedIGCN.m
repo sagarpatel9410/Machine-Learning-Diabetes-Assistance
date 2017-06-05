@@ -2,7 +2,7 @@ function [ BestNeighbours, newUserPredicted ] = PersonalisedIGCN(BestLNeighbours
 
     loopCond = false;
     previousNeighbours = zeros(1,BestLNeighbours);
-    
+    qasked = 0;
     while ~loopCond
         %Find the best l neighbours 
         [BestNeighbours, D] = knnsearch(C, newUserPredicted(:,1)','k', BestLNeighbours);
@@ -15,16 +15,17 @@ function [ BestNeighbours, newUserPredicted ] = PersonalisedIGCN(BestLNeighbours
         
         previousNeighbours = BestNeighbours;
     
-        if ~loopCond
+        if ~loopCond && qasked < questions 
             
             %Calculate IG from data from best neighbours
             ridx = find(ismember(idx, BestNeighbours));
             topics = InformationGain(idx(ridx), max_clusters, userData(:,ridx'), 0.05);
             
-            for i = 1:questions
-                newUserPredicted(topics(i),2) = newUserPredicted(topics(i),2) + 1;                 
-                newUserPredicted(topics(i),1) = (newUserPredicted(topics(i),1) + (newUser(topics(i)) >= rand()))/newUserPredicted(topics(i),2);
-            end
+            %Ask next Question
+            newUserPredicted(topics(1),2) = newUserPredicted(topics(1),2) + 1;                 
+            newUserPredicted(topics(1),1) = (newUserPredicted(topics(1),1) + (newUser(topics(1)) >= rand()))/newUserPredicted(topics(1),2);
+            
+            qasked = qasked + 1;
         end
     end
     
